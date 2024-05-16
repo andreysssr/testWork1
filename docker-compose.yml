@@ -1,0 +1,113 @@
+version: '3.9'
+
+networks:
+  backend:
+
+services:
+  nginx:
+    container_name: ${APP_NAME}-nginx
+    build:
+      context: ./docker/nginx
+    restart: always
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/app
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+      - ./docker/nginx/logs:/var/log/nginx
+    networks:
+      - backend
+    depends_on:
+      - php-1
+      - php-2
+      - php-3
+
+  php-1:
+    container_name: ${APP_NAME}-php-1
+    build:
+      context: ./docker/php
+    restart: always
+    ports:
+      - '9101:9000'
+    volumes:
+      - ./:/app
+    environment:
+      SERVICE_ID: ${APP_NAME}-php-1
+    networks:
+      - backend
+    depends_on:
+      - redis
+      - postgres
+
+  php-2:
+    container_name: ${APP_NAME}-php-2
+    build:
+      context: ./docker/php
+    restart: always
+    ports:
+      - '9102:9000'
+    volumes:
+      - ./:/app
+    environment:
+      SERVICE_ID: ${APP_NAME}-php-2
+    networks:
+      - backend
+    depends_on:
+      - redis
+      - postgres
+
+  php-3:
+    container_name: ${APP_NAME}-php-3
+    build:
+      context: ./docker/php
+    restart: always
+    ports:
+      - '9103:9000'
+    volumes:
+      - ./:/app
+    environment:
+      SERVICE_ID: ${APP_NAME}-php-3
+    networks:
+      - backend
+    depends_on:
+      - redis
+      - postgres
+
+  redis:
+    container_name: ${APP_NAME}-redis
+    image: redis:latest
+    restart: always
+    ports:
+      - "${REDIS_PORT}:6379"
+    networks:
+      - backend
+
+  postgres:
+    container_name: ${APP_NAME}-postgres
+    image: postgres:15
+    restart: always
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./docker/postgres/database/:/docker-entrypoint-initdb.d/
+    networks:
+      - backend
+
+  adminer:
+    container_name: ${APP_NAME}-adminer
+    image: adminer:latest
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${POSTGRES_DEFAULT_EMAIL:-admin@localhost.com}
+      PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      ADMINER_DEFAULT_SERVER: ${APP_NAME}-postgres
+    networks:
+      - backend

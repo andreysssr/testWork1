@@ -10,3 +10,6 @@ down:
 	docker compose down --remove-orphans
 
 reload: down init
+
+status:
+	docker ps

@@ -9,6 +9,3 @@ RUN apt-get update && apt-get install -y libpq-dev \
     && docker-php-ext-install pdo pgsql pdo_pgsql
 
 WORKDIR /app
-
-#ENTRYPOINT ["php", "-S", "0.0.0.0:8000", "-t", "/app/public"]
-#CMD ["php-fpm"]

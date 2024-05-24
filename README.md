@@ -29,12 +29,14 @@ make init   # создаёт образы для запуска контейне
 make up:    # запускает контейнеры
 make down   # останавливает и удаляет контейнеры
 make reload # запускает команды (make down) и (make init)
+make status # выводит список запущенных сервисов
 ```
 ### Команды для управления кода через Docker:
 ```shell
 docker compose build --parallel      # создаёт образы для запуска контейнеров
 docker compose up -d                 # запускает контейнеры
 docker compose down --remove-orphans # останавливает и удаляет контейнеры
+docker ps                            # выводит список запущенных сервисов
 ```
 
 
@@ -47,10 +49,6 @@ docker compose down --remove-orphans # останавливает и удаля�
 
 ### 2 Решение:
 
-Выполнены первые 2 пункта задания.
-
-Триггер не написан.
-
 Для задания создан дамп sql. При поднятии проекта он загружается в базу данных postgres.
 
 Для доступа к базе данных можно войти в браузере.
@@ -60,9 +58,77 @@ docker compose down --remove-orphans # останавливает и удаля�
 Сам файл sql находится по адресу:  
 `docker/postgres/database/pgsql-backup.sql`
 
+```sql
+--- ==============================================
+--- Тестовые данные для вставки в таблицу заказы
+--- ==============================================
+
+INSERT INTO orders (category_id, product_id, product_name, quantity, order_date)
+VALUES (1, 2, 'Видеокарта Asus GeForce GT 1030', 1, '2020-08-1');
+
+INSERT INTO orders (category_id, product_id, product_name, quantity, order_date)
+VALUES (1, 2, 'Видеокарта Asus GeForce GT 1030', 2, '2020-08-1');
+
+INSERT INTO orders (category_id, product_id, product_name, quantity, order_date)
+VALUES (1, 2, 'Видеокарта Asus GeForce GT 1030', 2, '2020-08-1');
+
+-- Видеокарта Asus GeForce GT 1030 - 5 шт. (2020-08-1)
 
 
+INSERT INTO orders (category_id, product_id, product_name, quantity, order_date)
+VALUES (1, 2, 'Видеокарта Asus GeForce GT 1030', 2, '2020-08-2');
 
+INSERT INTO orders (category_id, product_id, product_name, quantity, order_date)
+VALUES (1, 2, 'Видеокарта Asus GeForce GT 1030', 1, '2020-08-2');
+
+-- Видеокарта Asus GeForce GT 1030 - 3 шт. (2020-08-2)
+
+
+INSERT INTO orders (category_id, product_id, product_name, quantity, order_date)
+VALUES (1, 2, 'Видеокарта Asus GeForce GT 1030', 1, '2020-08-3');
+
+-- Видеокарта Asus GeForce GT 1030 - 1 шт. (2020-08-3)
+
+
+INSERT INTO orders (category_id, product_id, product_name, quantity, order_date)
+VALUES (3, 4, 'Фен Dewal 03-401', 1, '2020-08-1');
+
+INSERT INTO orders (category_id, product_id, product_name, quantity, order_date)
+VALUES (3, 4, 'Фен Dewal 03-401', 6, '2020-08-1');
+
+-- Фен Dewal 03-401 - 7 шт. (2020-08-1)
+
+
+INSERT INTO orders (category_id, product_id, product_name, quantity, order_date)
+VALUES (3, 4, 'Фен Dewal 03-401', 5, '2020-08-2');
+
+INSERT INTO orders (category_id, product_id, product_name, quantity, order_date)
+VALUES (3, 4, 'Фен Dewal 03-401', 3, '2020-08-2');
+
+-- Фен Dewal 03-401 - 8 шт. (2020-08-2)
+
+
+INSERT INTO orders (category_id, product_id, product_name, quantity, order_date)
+VALUES (3, 4, 'Фен Dewal 03-401', 1, '2020-08-3');
+
+INSERT INTO orders (category_id, product_id, product_name, quantity, order_date)
+VALUES (3, 4, 'Фен Dewal 03-401', 1, '2020-08-3');
+
+INSERT INTO orders (category_id, product_id, product_name, quantity, order_date)
+VALUES (3, 4, 'Фен Dewal 03-401', 3, '2020-08-3');
+
+-- Фен Dewal 03-401 - 5 шт. (2020-08-3)
+```
+
+В таблице `statistics` должны быть подсчитаны продажи по дням 
+```
+Видеокарта Asus GeForce GT 1030    - 5 шт.   (2020-08-1) 
+Видеокарта Asus GeForce GT 1030    - 3 шт.   (2020-08-2) 
+Видеокарта Asus GeForce GT 1030    - 1 шт.   (2020-08-3)
+Фен Dewal 03-401                   - 7 шт.   (2020-08-1)
+Фен Dewal 03-401                   - 8 шт.   (2020-08-2)
+Фен Dewal 03-401                   - 5 шт.   (2020-08-3)
+```
 
 
 

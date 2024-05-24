@@ -6,7 +6,6 @@ $message = sprintf(
     getenv('SERVICE_ID')
 );
 
-//echo json_encode(compact('message')), "<br><br>";
 echo $message, "<br><br>";
 
 ob_start();
